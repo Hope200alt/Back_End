@@ -30,7 +30,7 @@ class BookController {
             if (req.user.role !== 'admin') {
                 return res.status(403).json({ message: 'Unauthorized' });
             }
-            
+
             const bookId = await Book.create(req.body);
             res.status(201).json({ message: 'Book added successfully', bookId });
         } catch (error) {
