@@ -7,7 +7,7 @@ global.pool = db;
 const authRoutes = require('./routes/auth');
 const bookRoutes = require('./routes/books');
 const reservationRoutes = require('./routes/reservations');
-const userRoutes = require('./routes/users');
+const userRoutes = require('./model/Users');
 
 const app = express();
 
@@ -20,6 +20,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/users', userRoutes);
+app.get('/', (req, res) => {
+    res.send('Library Management API is running');
+  });
+
 
 // Error handling
 app.use((err, req, res, next) => {

@@ -1,3 +1,4 @@
+// Books.js
 class Book {
     static async findAll(search = '', genre = '') {
         let query = `SELECT * FROM books WHERE (title ILIKE $1 OR author ILIKE $1)`;
@@ -7,7 +8,6 @@ class Book {
             query += ` AND genre = $2`;
             params.push(genre);
         }
-
         const { rows } = await global.pool.query(query, params);
         return rows;
     }
@@ -23,15 +23,19 @@ class Book {
             [change, id]
         );
     }
+    static async delete(id) {
+        await global.pool.query('DELETE FROM books WHERE id = $1', [id]);
+      }
 
     static async create(bookData) {
-        const { title, author, genre, isbn, published_year, total_copies, description } = bookData;
+        // Include image_url in the destructuring (optional if not provided)
+        const { title, author, genre, isbn, published_year, total_copies, description, image_url } = bookData;
         const { rows } = await global.pool.query(
             `INSERT INTO books 
-            (title, author, genre, isbn, published_year, total_copies, available_copies, description) 
-            VALUES ($1, $2, $3, $4, $5, $6, $6, $7) 
+            (title, author, genre, isbn, published_year, total_copies, available_copies, description, image_url) 
+            VALUES ($1, $2, $3, $4, $5, $6, $6, $7, $8) 
             RETURNING id`,
-            [title, author, genre, isbn, published_year, total_copies, description]
+            [title, author, genre, isbn, published_year, total_copies, description, image_url]
         );
         return rows[0].id;
     }
