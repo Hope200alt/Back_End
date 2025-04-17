@@ -38,14 +38,19 @@ class ReservationController {
             if (req.user.role !== 'admin') {
                 return res.status(403).json({ message: 'Unauthorized' });
             }
-
             const { status } = req.body;
-            await Reservation.updateStatus(req.params.id, status);
+            const reservationId = req.params.id;
 
-            if (status === 'approved' || status === 'rejected') {
-                const reservation = await Reservation.findById(req.params.id);
+            const reservation = await Reservation.findById(reservationId);
+            if (!reservation) {
+                return res.status(404).json({ message: 'Reservation not found' });
+            }
+
+            if (reservation.status !== 'pending' && (status === 'approved' || status === 'rejected')) {
                 await Book.updateAvailability(reservation.book_id, 1);
             }
+
+            await Reservation.updateStatus(reservationId, status);
 
             res.json({ message: 'Reservation status updated successfully' });
         } catch (error) {
